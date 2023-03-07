@@ -1,5 +1,8 @@
-import React, { FC, useState, FormEvent, MouseEvent } from "react";
+import React, { FC, useState, FormEvent, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { myContextApi } from "../StateManager";
+
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -14,6 +17,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import done from "../assets/images/Done.png";
 
 const Login: FC = () => {
+const { doingsUsers } = useContext(myContextApi);
+  const [message, setMessage] = useState<string>("")
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -28,8 +33,14 @@ const Login: FC = () => {
 
   const formSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget)
+    const newLogin = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string | number
+    }
     navigate("/dashboard");
-  };
+  }
+  console.log(doingsUsers);
   return (
     <div>
       <div className="flex flex-col items-center relative top-5">
@@ -40,57 +51,57 @@ const Login: FC = () => {
           <p className="text-lg text-center leading-tight">
             Welcome Back <br /> to
           </p>
-          <h1>MY DOINGS</h1>
+          <h1>DOINGS</h1>
         </div>
         <div className="px-5">
           <form onSubmit={formSubmit} className="w-full">
-           
-              <TextField
-                id="outlined-basic"
-                label="Email"
-                variant="outlined"
-                sx={{
-                  width: "100%",
-                  backgroundColor: "",
-                  marginTop: "10px",
-                }}
-                type="email"
-                required
+            <TextField
+              id="outlined-basic"
+              label="Email"
+              variant="outlined"
+              sx={{
+                width: "100%",
+                backgroundColor: "",
+                marginTop: "10px",
+              }}
+              type="email"
+              required
+            />
+            <FormControl
+              sx={{
+                width: "100%",
+                marginTop: "10px",
+              }}
+              variant="outlined"
+              required
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
               />
-              <FormControl
-                sx={{
-                  width: "100%",
-                  marginTop: "10px",
-                }}
-                variant="outlined"
-                required
-              >
-                <InputLabel htmlFor="outlined-adornment-password">
-                  Password
-                </InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                />
-              </FormControl>
-              <p className="text-center font-bold my-10 md:my-5">
-                Forgot Password?
-              </p>
-              <button className="py-3 rounded text-xl font-bold w-full">Submit</button>
-            
+            </FormControl>
+            <p className="text-center font-bold my-10 md:my-5">
+              Forgot Password?
+            </p>
+            <button className="py-3 rounded text-xl font-bold w-full">
+              Submit
+            </button>
           </form>
           <p className="text-center mt-2">
             Don't have an account?{" "}

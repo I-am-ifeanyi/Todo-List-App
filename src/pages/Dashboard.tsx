@@ -19,7 +19,6 @@ const Dashboard: FC = () => {
           <i className="text-sm font-light text-[#D8605B]">
             theonyekagroup@gmail.com
           </i>
-          {/* <button className="px-5 py-2 rounded mt-4">Log Out</button> */}
           <DoingsForm />
         </div>
         <h2 className="my-5 tracking-widest text-2xl font-bold text-[#D8605B] border-b-2 rounded-b-lg px-2 border-[#D8605B] ">

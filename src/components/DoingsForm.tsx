@@ -1,32 +1,42 @@
-import React, { FC, useContext } from 'react'
+import React, { useContext } from "react";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 import { myContextApi } from "../StateManager";
 
-
-
 const DoingsForm = () => {
-    const { todo, setTodo, isFormSubmitted, setIsFormSubmitted } =
-      useContext(myContextApi);
+  const { todos, setTodos, } = useContext(myContextApi);
 
-  const handleSubmit = (e: React.SyntheticEvent): void => {
-    e.preventDefault();
-    setIsFormSubmitted(true)
+
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // get form data
+    const formData = new FormData(event.currentTarget);
+
+    // create new todo object
+    const newTodo = {
+      title: formData.get("title") as string,
+      newDoings: formData.get("newDoings") as string | number,
+      date: formData.get("date"),
+    };
+
+    // add new todo to array and also save to local storage. Object is stringified because local storage only save strings
+    const newItem = [...todos, newTodo];
+    setTodos(newItem);
+    localStorage.setItem("todos", JSON.stringify(newItem));
+
+    console.log(todos);
+
+    // clear form fields
+    event.currentTarget.reset();
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setTodo((todo) => ({
-      ...todo,
-      [name]: value
-    }))
-    console.log(todo);
-  };
-    
   return (
     <div className="mt-2">
+
       <form onSubmit={handleSubmit}>
         <TextField
           id="outlined-basic"
@@ -40,8 +50,6 @@ const DoingsForm = () => {
           type="text"
           required
           name="title"
-          value={todo.title}
-          onChange={handleChange}
         />
         <TextField
           id="outlined-basic"
@@ -55,23 +63,18 @@ const DoingsForm = () => {
           type="text"
           required
           name="newDoings"
-          value={todo.newDoings}
-          onChange={handleChange}
         />
         <TextField
           id="datetime-local"
           label="Time for Doings"
           type="datetime-local"
-          defaultValue="2023-02-25T10:30"
+          defaultValue="2023-05-25T04:50"
           sx={{ width: "100%", backgroundColor: "", marginTop: "16px" }}
           InputLabelProps={{
             shrink: true,
           }}
-
           name="date"
-          value={todo.date}
-          onChange={handleChange}
-          
+          required
         />
         <Button
           variant="contained"
@@ -83,6 +86,6 @@ const DoingsForm = () => {
       </form>
     </div>
   );
-}
+};
 
-export default DoingsForm
+export default DoingsForm;
