@@ -15,6 +15,13 @@ function App() {
   //   backgroundPosition: "center",
   //   backgroundSize: "cover",
   // };
+
+  interface IUserDetails {
+    fullName: string;
+    email: string;
+    password: string | number;
+    confirmPassword: string | number;
+  }
   const { doingsUsers, isUser } = useContext(myContextApi);
 
   return (

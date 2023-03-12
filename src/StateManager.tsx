@@ -1,4 +1,6 @@
-import React, { useState, createContext, useEffect, useRef } from "react";
+import React, { useState, createContext, useEffect } from "react";
+NPM 
+
 
 interface IUserDetails {
   fullName: string;
@@ -12,6 +14,7 @@ interface ITodo {
   newDoings: string | number;
   date: Date | undefined;
 }
+const apiKey = import.meta.env.VITE_API_KEY;
 
 
 const myContextApi = createContext<ITodo | null | IUserDetails>(null);
@@ -60,12 +63,12 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Fetch the different languages to be translated
-  const options = {
+  const options: RequestInit = {
     method: "GET",
-    headers: {
-      "X-RapidAPI-Key": "95526bab6fmsh8c76eabcc6128a6p133e4djsne4d7583fda0c",
+    headers: new Headers({
+      "X-RapidAPI-Key": apiKey || "",
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
-    },
+    }),
   };
   useEffect(() => {
     fetch("https://text-translator2.p.rapidapi.com/getLanguages", options)
@@ -74,19 +77,20 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => console.error(err));
   }, []);
 
+
   // Post text to be translated and fetch and save the translated text
   const encodedParams = new URLSearchParams();
   encodedParams.append("source_language", sourceLang);
   encodedParams.append("target_language", changeLanguage);
   encodedParams.append("text", textToTranslate);
 
-  const option = {
+  const option: RequestInit = {
     method: "POST",
-    headers: {
+    headers: new Headers({
       "content-type": "application/x-www-form-urlencoded",
-      "X-RapidAPI-Key": "95526bab6fmsh8c76eabcc6128a6p133e4djsne4d7583fda0c",
+      "X-RapidAPI-Key": apiKey || "",
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
-    },
+    }),
     body: encodedParams,
   };
   useEffect(() => {
