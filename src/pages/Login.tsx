@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { myContextApi } from "../StateManager";
 
-
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
@@ -17,8 +16,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import done from "../assets/images/Done.png";
 
 const Login: FC = () => {
-const { doingsUsers } = useContext(myContextApi);
-  const [message, setMessage] = useState<string>("")
+  const { doingsUsers, isUser, setIsUser } = useContext(myContextApi);
+  const [isAccountFound, setIsAccountFound] = useState<boolean>(true);
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -33,13 +32,27 @@ const { doingsUsers } = useContext(myContextApi);
 
   const formSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget)
+    const formData = new FormData(event.currentTarget);
     const newLogin = {
       email: formData.get("email") as string,
-      password: formData.get("password") as string | number
+      password: formData.get("password") as string | number,
+    };
+
+    const details = doingsUsers.some(
+      (users) =>
+        users.email === newLogin.email && users.password === newLogin.password
+    );
+    if (details) {
+      setIsAccountFound(true);
+      setIsUser(true)
+
+      navigate("/dashboard");
+    } else {
+      setIsAccountFound(false);
+      event.currentTarget.reset()
+      setIsUser(false)
     }
-    navigate("/dashboard");
-  }
+  };
   console.log(doingsUsers);
   return (
     <div>
@@ -66,6 +79,7 @@ const { doingsUsers } = useContext(myContextApi);
               }}
               type="email"
               required
+              name="email"
             />
             <FormControl
               sx={{
@@ -94,9 +108,15 @@ const { doingsUsers } = useContext(myContextApi);
                   </InputAdornment>
                 }
                 label="Password"
+                name="password"
               />
             </FormControl>
-            <p className="text-center font-bold my-10 md:my-5">
+            {!isAccountFound && (
+              <label className="text-xs text-red-800">
+                Email or Password could not be found. Try again
+              </label>
+            )}{" "}
+            <p className="text-center font-bold my-10 md:my-5 cursor-pointer" onClick={() => alert("Feature in progress")}>
               Forgot Password?
             </p>
             <button className="py-3 rounded text-xl font-bold w-full">

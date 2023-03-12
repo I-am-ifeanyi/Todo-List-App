@@ -13,13 +13,17 @@ interface ITodo {
   date: Date | undefined;
 }
 
+
 const myContextApi = createContext<ITodo | null | IUserDetails>(null);
 
 const StateManager = ({ children }: { children: React.ReactNode }) => {
-  const inputRef = useRef();
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [doingsUsers, setDoingsUsers] = useState<IUserDetails[]>([]);
+  const [userDisplayName, setUserDisplayName] = useState<string>("")
+  const [userDisplayEmail, setUserDisplayEmail] = useState<string>("");
+  const [isUser, setIsUser] = useState<boolean>(false) 
+
 
   const [textToTranslate, setTextToTranslate] = useState<string>("");
   const [translatedText, setTranslatedText] = useState<string | number>("");
@@ -59,12 +63,12 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
   const options = {
     method: "GET",
     headers: {
-      "X-RapidAPI-Key": "5e3037cc9amsha2a12b21aae7181p16d9bajsn7173051fbda5",
+      "X-RapidAPI-Key": "95526bab6fmsh8c76eabcc6128a6p133e4djsne4d7583fda0c",
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
     },
   };
   useEffect(() => {
-    fetch("https://tex-translator2.p.rapidapi.com/getLanguages", options)
+    fetch("https://text-translator2.p.rapidapi.com/getLanguages", options)
       .then((response) => response.json())
       .then((response) => setLanguages(response.data.languages))
       .catch((err) => console.error(err));
@@ -80,20 +84,22 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
     method: "POST",
     headers: {
       "content-type": "application/x-www-form-urlencoded",
-      "X-RapidAPI-Key": "5e3037cc9amsha2a12b21aae7181p16d9bajsn7173051fbda5",
+      "X-RapidAPI-Key": "95526bab6fmsh8c76eabcc6128a6p133e4djsne4d7583fda0c",
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
     },
     body: encodedParams,
   };
   useEffect(() => {
     setIsFetching(true);
-    fetch("https://tex-translator2.p.rapidapi.com/translate", option)
+    fetch("https://text-translator2.p.rapidapi.com/translate", option)
       .then((response) => response.json())
       .then((response) => {
         setTranslatedText(response?.data?.translatedText), setIsFetching(false);
       })
       .catch((err) => console.error(err));
-  }, [textToTranslate]);
+  }, [textToTranslate, changeLanguage]);
+
+ 
 
   return (
     <myContextApi.Provider
@@ -114,6 +120,12 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
         setSourceLang,
         doingsUsers,
         setDoingsUsers,
+        userDisplayName,
+        setUserDisplayName,
+        userDisplayEmail,
+        setUserDisplayEmail,
+        isUser,
+        setIsUser,
       }}
     >
       {children}

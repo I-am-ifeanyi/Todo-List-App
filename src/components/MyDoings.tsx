@@ -74,11 +74,12 @@ const MyDoings: FC = () => {
                       disabled
                     />
                     {textToTranslate === doings.newDoings && isFetching && (
+                    <figure className="absolute w-full border h-full flex items-center justify-center">
                       <CircularProgress
                         color="success"
-                        className="absolute mt-16 ml-28"
+                        
                       />
-                    )}{" "}
+                    </figure>)}
                   </div>
                 </aside>
                 {sureToDelete && (

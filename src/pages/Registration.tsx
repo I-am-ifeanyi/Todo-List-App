@@ -19,10 +19,16 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import done from "../assets/images/Done.png";
 
 const Registration: FC = () => {
-  const { doingsUsers, setDoingsUsers } = useContext(myContextApi);
+  const {
+    doingsUsers,
+    setDoingsUsers,
+    setUserDisplayName,
+    setUserDisplayEmail,
+  } = useContext(myContextApi);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(true);
   const [isRegSuccess, setIsRegSuccess] = useState<boolean>(false);
+  const [accountExists, setAccountExists] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -44,27 +50,35 @@ const Registration: FC = () => {
       confirmPassword: formData.get("password2") as string | number,
     };
     const { password, confirmPassword } = newUserDetails;
+    const crosscheck = doingsUsers.some(
+      (result) => result.email === newUserDetails.email
+    );
     if (password !== confirmPassword) {
       setIsPasswordMatch(false);
       event.currentTarget.reset();
+
       return null;
+    } else if (crosscheck) {
+      setIsPasswordMatch(true);
+
+      setAccountExists(true);
     } else {
+      setUserDisplayName(newUserDetails.full_Name);
+      setUserDisplayEmail(newUserDetails.email);
       setIsPasswordMatch(true);
       setIsRegSuccess(true);
       const newUser = [...doingsUsers, newUserDetails];
       setDoingsUsers(newUser);
       localStorage.setItem("doingsUsers", JSON.stringify(newUser));
-        console.log(doingsUsers);
 
       setTimeout(() => {
         navigate("/login");
-      }, 1000);
+      }, 2000);
     }
   };
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [isRegSuccess]);
-  console.log(doingsUsers);
   return (
     <div>
       {isRegSuccess && (
@@ -177,7 +191,12 @@ const Registration: FC = () => {
             <label className="text-red-800 text-xs">
               Password not a match. Try again
             </label>
-          )}{" "}
+          )}
+          {accountExists && (
+            <label className="text-red-800 text-xs">
+              An account with this email already exists
+            </label>
+          )}
           <button className="py-3 rounded text-xl font-bold mt-5 w-full">
             Submit
           </button>

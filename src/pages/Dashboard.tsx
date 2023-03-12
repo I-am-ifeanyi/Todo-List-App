@@ -1,11 +1,16 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 
 import DoingsForm from "../components/DoingsForm";
 import MyDoings from "../components/MyDoings";
 
+import { myContextApi } from "../StateManager";
+
+
 import clock from "../assets/images/clock.png";
 
 const Dashboard: FC = () => {
+  const { userDisplayName, userDisplayEmail } = useContext(myContextApi);
+
   return (
     <div className="bg-gray-200 h-auto pb-20 md:w-1/2 relative m-auto">
       <div className="flex flex-col items-center relative leading-tight">
@@ -14,10 +19,10 @@ const Dashboard: FC = () => {
             <img src={clock} alt="clock" />
           </figure>
           <figcaption className="text-2xl font-semibold tracking-wider">
-            Ifeanyi Onyeka{" "}
+            {userDisplayName}
           </figcaption>
           <i className="text-sm font-light text-[#D8605B]">
-            theonyekagroup@gmail.com
+            {userDisplayEmail}
           </i>
           <DoingsForm />
         </div>
