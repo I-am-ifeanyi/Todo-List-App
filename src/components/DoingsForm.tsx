@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext} from "react";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -6,9 +6,7 @@ import Button from "@mui/material/Button";
 import { myContextApi } from "../StateManager";
 
 const DoingsForm = () => {
-  const { todos, setTodos, } = useContext(myContextApi);
-
-
+  const { todos, setTodos } = useContext(myContextApi) ?? {};
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,24 +17,26 @@ const DoingsForm = () => {
     // create new todo object
     const newTodo = {
       title: formData.get("title") as string,
-      newDoings: formData.get("newDoings") as string | number,
-      date: formData.get("date"),
+      newDoings: formData.get("newDoings") as string,
+      date: formData.get("date")
+        ? new Date(formData.get("date") as string)
+        : null,
     };
 
     // add new todo to array and also save to local storage. Object is stringified because local storage only save strings
-    const newItem = [...todos, newTodo];
-    setTodos(newItem);
+    const newItem = [...(todos ?? []), newTodo];
+    setTodos?.(newItem);
     localStorage.setItem("todos", JSON.stringify(newItem));
 
     console.log(todos);
 
     // clear form fields
     event.currentTarget.reset();
+     
   };
 
   return (
     <div className="mt-2">
-
       <form onSubmit={handleSubmit}>
         <TextField
           id="outlined-basic"
@@ -66,9 +66,9 @@ const DoingsForm = () => {
         />
         <TextField
           id="datetime-local"
-          label="Time for Doings"
+          label="Date for Doings"
           type="datetime-local"
-          defaultValue="2023-05-25T04:50"
+          defaultValue=""
           sx={{ width: "100%", backgroundColor: "", marginTop: "16px" }}
           InputLabelProps={{
             shrink: true,

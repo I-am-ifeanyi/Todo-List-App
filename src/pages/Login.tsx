@@ -1,4 +1,4 @@
-import React, { FC, useState, FormEvent, useContext } from "react";
+import React, { FC, useState, FormEvent, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { myContextApi } from "../StateManager";
@@ -16,7 +16,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import done from "../assets/images/Done.png";
 
 const Login: FC = () => {
-  const { doingsUsers, isUser, setIsUser } = useContext(myContextApi);
+  const { doingsUsers} = useContext(myContextApi) ?? {};
   const [isAccountFound, setIsAccountFound] = useState<boolean>(true);
   const navigate = useNavigate();
 
@@ -38,22 +38,25 @@ const Login: FC = () => {
       password: formData.get("password") as string | number,
     };
 
-    const details = doingsUsers.some(
+    const details = doingsUsers?.some(
       (users) =>
         users.email === newLogin.email && users.password === newLogin.password
     );
     if (details) {
       setIsAccountFound(true);
-      setIsUser(true)
 
       navigate("/dashboard");
     } else {
       setIsAccountFound(false);
       event.currentTarget.reset()
-      setIsUser(false)
     }
   };
-  console.log(doingsUsers);
+   useEffect(() => {
+     window.scrollTo({
+       top: 0,
+       behavior: "smooth",
+     });
+   }, []);
   return (
     <div>
       <div className="flex flex-col items-center relative top-5">

@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useContext, useEffect } from "react";
 
 import DoingsForm from "../components/DoingsForm";
 import MyDoings from "../components/MyDoings";
@@ -9,7 +9,14 @@ import { myContextApi } from "../StateManager";
 import clock from "../assets/images/clock.png";
 
 const Dashboard: FC = () => {
-  const { userDisplayName, userDisplayEmail } = useContext(myContextApi);
+  const { userDisplayName, userDisplayEmail, todos } =
+    useContext(myContextApi) ?? {};
+    useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, []);
 
   return (
     <div className="bg-gray-200 h-auto pb-20 md:w-1/2 relative m-auto">

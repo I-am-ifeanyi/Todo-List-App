@@ -1,6 +1,4 @@
 import React, { useState, createContext, useEffect } from "react";
-NPM 
-
 
 interface IUserDetails {
   fullName: string;
@@ -11,22 +9,49 @@ interface IUserDetails {
 
 interface ITodo {
   title: string;
-  newDoings: string | number;
-  date: Date | undefined;
+  newDoings: string;
+  date: Date | null;
+}
+interface Language {
+  code: string;
+  name: string;
+}
+
+interface IMyContext {
+  todos: ITodo[];
+  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>;
+  handleDelete: (index: number) => void;
+  handleUpdate: (index: number, updatedItem: ITodo) => void;
+  languages: Language[];
+  changeLanguage: string;
+  translatedText: string | number;
+  textToTranslate: string;
+  setChangeLanguage: React.Dispatch<React.SetStateAction<string>>;
+  setTranslatedText: React.Dispatch<React.SetStateAction<string | number>>;
+  setTextToTranslate: React.Dispatch<React.SetStateAction<string>>;
+  isFetching: boolean;
+  sourceLang: string;
+  setSourceLang: React.Dispatch<React.SetStateAction<string>>;
+  doingsUsers: IUserDetails[];
+  setDoingsUsers: React.Dispatch<React.SetStateAction<IUserDetails[]>>;
+  userDisplayName: string;
+  setUserDisplayName: React.Dispatch<React.SetStateAction<string>>;
+  userDisplayEmail: string;
+  setUserDisplayEmail: React.Dispatch<React.SetStateAction<string>>;
+  isUser: boolean;
+  setIsUser: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const apiKey = import.meta.env.VITE_API_KEY;
 
-
-const myContextApi = createContext<ITodo | null | IUserDetails>(null);
+const myContextApi = createContext<IMyContext | null>(null);
 
 const StateManager = ({ children }: { children: React.ReactNode }) => {
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [doingsUsers, setDoingsUsers] = useState<IUserDetails[]>([]);
-  const [userDisplayName, setUserDisplayName] = useState<string>("")
+  const [userDisplayName, setUserDisplayName] = useState<string>("");
   const [userDisplayEmail, setUserDisplayEmail] = useState<string>("");
-  const [isUser, setIsUser] = useState<boolean>(false) 
-
+  const [isUser, setIsUser] = useState<boolean>(false);
 
   const [textToTranslate, setTextToTranslate] = useState<string>("");
   const [translatedText, setTranslatedText] = useState<string | number>("");
@@ -66,7 +91,7 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
   const options: RequestInit = {
     method: "GET",
     headers: new Headers({
-      "X-RapidAPI-Key": apiKey || "",
+      "X-RapidAPI-Key": apiKey,
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
     }),
   };
@@ -76,7 +101,6 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
       .then((response) => setLanguages(response.data.languages))
       .catch((err) => console.error(err));
   }, []);
-
 
   // Post text to be translated and fetch and save the translated text
   const encodedParams = new URLSearchParams();
@@ -88,7 +112,7 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
     method: "POST",
     headers: new Headers({
       "content-type": "application/x-www-form-urlencoded",
-      "X-RapidAPI-Key": apiKey || "",
+      "X-RapidAPI-Key": apiKey,
       "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
     }),
     body: encodedParams,
@@ -99,12 +123,12 @@ const StateManager = ({ children }: { children: React.ReactNode }) => {
       .then((response) => response.json())
       .then((response) => {
         setTranslatedText(response?.data?.translatedText), setIsFetching(false);
+
+        setIsFetching(false);
       })
       .catch((err) => console.error(err));
   }, [textToTranslate, changeLanguage]);
-
- 
-
+  console.log(translatedText);
   return (
     <myContextApi.Provider
       value={{

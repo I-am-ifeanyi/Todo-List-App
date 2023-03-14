@@ -2,9 +2,6 @@ import React, { FC, useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { myContextApi } from "../StateManager";
 
-import AOS from "aos";
-import "aos/dist/aos.css";
-AOS.init();
 
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -24,7 +21,7 @@ const Registration: FC = () => {
     setDoingsUsers,
     setUserDisplayName,
     setUserDisplayEmail,
-  } = useContext(myContextApi);
+  } = useContext(myContextApi) ?? {};
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(true);
   const [isRegSuccess, setIsRegSuccess] = useState<boolean>(false);
@@ -44,13 +41,13 @@ const Registration: FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const newUserDetails = {
-      full_Name: formData.get("full_name") as string,
+      fullName: formData.get("full_name") as string,
       email: formData.get("email") as string,
       password: formData.get("password") as string | number,
       confirmPassword: formData.get("password2") as string | number,
     };
     const { password, confirmPassword } = newUserDetails;
-    const crosscheck = doingsUsers.some(
+    const crosscheck = doingsUsers?.some(
       (result) => result.email === newUserDetails.email
     );
     if (password !== confirmPassword) {
@@ -63,12 +60,12 @@ const Registration: FC = () => {
 
       setAccountExists(true);
     } else {
-      setUserDisplayName(newUserDetails.full_Name);
-      setUserDisplayEmail(newUserDetails.email);
+      setUserDisplayName && setUserDisplayName(newUserDetails.fullName);
+      setUserDisplayEmail && setUserDisplayEmail(newUserDetails.email);
       setIsPasswordMatch(true);
       setIsRegSuccess(true);
-      const newUser = [...doingsUsers, newUserDetails];
-      setDoingsUsers(newUser);
+      const newUser = [...(doingsUsers ?? []), newUserDetails];
+      setDoingsUsers?.(newUser);
       localStorage.setItem("doingsUsers", JSON.stringify(newUser));
 
       setTimeout(() => {
